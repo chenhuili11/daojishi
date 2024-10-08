@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>倒计时器</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        .time-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .time-item {
+            flex: 1;
+        }
+        .time-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        h3 {
+            font-size: 2.5em; /* 字体放大 */
+            margin: 0;       /* 去掉默认外边距 */
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h3>纪念日</h3>
+    <h2>距离6月14日还有</h2>
+    <div class="time-section" id="countdown">
+        <div class="time-item">
+            <span class="time-value" id="days">0</span> 天
+        </div>
+        <div class="time-item">
+            <span class="time-value" id="hours">0</span> 小时
+        </div>
+        <div class="time-item">
+            <span class="time-value" id="minutes">0</span> 分钟
+        </div>
+        <div class="time-item">
+            <span class="time-value" id="seconds">0</span> 秒
+        </div>
+    </div>
+</div>
+
+<script>
+    const calculateTimeLeft = () => {
+        const now = new Date();
+        let targetDate = new Date(now.getFullYear(), 5, 14); // 6月为5（0-index计数）
+
+        // 如果当前时间已超过目标日期，则将目标日期设置为下一年
+        if (now > targetDate) {
+            targetDate = new Date(now.getFullYear() + 1, 5, 14);
+        }
+
+        const difference = targetDate.getTime() - now.getTime();
+
+        if (difference > 0) {
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((difference / 1000 / 60) % 60);
+            const seconds = Math.floor((difference / 1000) % 60);
+
+            // 更新显示内容
+            document.getElementById("days").innerText = days;
+            document.getElementById("hours").innerText = hours;
+            document.getElementById("minutes").innerText = minutes;
+            document.getElementById("seconds").innerText = seconds;
+        }
+    };
+
+    // 初始化倒计时
+    calculateTimeLeft();
+    setInterval(calculateTimeLeft, 1000);
+</script>
+
+</body>
+</html>

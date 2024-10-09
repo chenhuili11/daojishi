@@ -54,43 +54,78 @@
             color: #666;
             font-weight: normal;
         }
+        button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
-<div class="card">
+<div id="solarCountdown" class="card">
     <h1>纪念日</h1>
     <h2>距离6月14日还有</h2>
-    <div class="time-section" id="countdown" aria-live="polite">
+    <div class="time-section" aria-live="polite">
         <div class="time-item">
-            <span class="time-value" id="days">0</span>
+            <span class="time-value" id="solarDays">0</span>
             <span class="time-label">天</span>
         </div>
         <div class="time-item">
-            <span class="time-value" id="hours">0</span>
+            <span class="time-value" id="solarHours">00</span>
             <span class="time-label">小时</span>
         </div>
         <div class="time-item">
-            <span class="time-value" id="minutes">0</span>
+            <span class="time-value" id="solarMinutes">00</span>
             <span class="time-label">分钟</span>
         </div>
         <div class="time-item">
-            <span class="time-value" id="seconds">0</span>
+            <span class="time-value" id="solarSeconds">00</span>
             <span class="time-label">秒</span>
         </div>
     </div>
+    <button onclick="switchCountdown('lunar')">查看生日倒计时</button>
+</div>
+
+<div id="lunarCountdown" class="card hidden">
+    <h1>生日</h1>
+    <h2>距离四月初一还有</h2>
+    <div class="time-section" aria-live="polite">
+        <div class="time-item">
+            <span class="time-value" id="lunarDays">0</span>
+            <span class="time-label">天</span>
+        </div>
+        <div class="time-item">
+            <span class="time-value" id="lunarHours">00</span>
+            <span class="time-label">小时</span>
+        </div>
+        <div class="time-item">
+            <span class="time-value" id="lunarMinutes">00</span>
+            <span class="time-label">分钟</span>
+        </div>
+        <div class="time-item">
+            <span class="time-value" id="lunarSeconds">00</span>
+            <span class="time-label">秒</span>
+        </div>
+    </div>
+    <button onclick="switchCountdown('solar')">查看纪念日倒计时</button>
 </div>
 
 <script>
-    const calculateTimeLeft = () => {
+    function calculateTimeLeft(targetDate) {
         const now = new Date();
-        let targetDate = new Date(now.getFullYear(), 5, 14); // 6月为5（0-index计数）
-
-        // 如果当前时间已超过目标日期，则将目标日期设置为下一年
-        if (now > targetDate) {
-            targetDate = new Date(now.getFullYear() + 1, 5, 14);
-        }
-
         const difference = targetDate.getTime() - now.getTime();
 
         if (difference > 0) {
@@ -99,17 +134,61 @@
             const minutes = Math.floor((difference / 1000 / 60) % 60);
             const seconds = Math.floor((difference / 1000) % 60);
 
-            // 更新显示内容
-            document.getElementById("days").textContent = days;
-            document.getElementById("hours").textContent = hours.toString().padStart(2, '0');
-            document.getElementById("minutes").textContent = minutes.toString().padStart(2, '0');
-            document.getElementById("seconds").textContent = seconds.toString().padStart(2, '0');
+            return { days, hours, minutes, seconds };
         }
-    };
+
+        return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    }
+
+    function updateCountdown(type) {
+        let targetDate;
+        let daysId, hoursId, minutesId, secondsId;
+
+        if (type === 'solar') {
+            const now = new Date();
+            targetDate = new Date(now.getFullYear(), 5, 14);
+            if (now > targetDate) {
+                targetDate = new Date(now.getFullYear() + 1, 5, 14);
+            }
+            daysId = 'solarDays';
+            hoursId = 'solarHours';
+            minutesId = 'solarMinutes';
+            secondsId = 'solarSeconds';
+        } else {
+            // 估算农历生日到明年4月28号
+            const now = new Date();
+            targetDate = new Date(now.getFullYear() + (now > new Date(now.getFullYear(), 3, 28) ? 1 : 0), 3, 28);
+            daysId = 'lunarDays';
+            hoursId = 'lunarHours';
+            minutesId = 'lunarMinutes';
+            secondsId = 'lunarSeconds';
+        }
+
+        const timeLeft = calculateTimeLeft(targetDate);
+
+        document.getElementById(daysId).textContent = timeLeft.days;
+        document.getElementById(hoursId).textContent = timeLeft.hours.toString().padStart(2, '0');
+        document.getElementById(minutesId).textContent = timeLeft.minutes.toString().padStart(2, '0');
+        document.getElementById(secondsId).textContent = timeLeft.seconds.toString().padStart(2, '0');
+    }
+
+    function switchCountdown(type) {
+        if (type === 'lunar') {
+            document.getElementById('solarCountdown').classList.add('hidden');
+            document.getElementById('lunarCountdown').classList.remove('hidden');
+        } else {
+            document.getElementById('lunarCountdown').classList.add('hidden');
+            document.getElementById('solarCountdown').classList.remove('hidden');
+        }
+    }
 
     // 初始化倒计时
-    calculateTimeLeft();
-    setInterval(calculateTimeLeft, 1000);
+    updateCountdown('solar');
+    updateCountdown('lunar');
+    setInterval(() => {
+        updateCountdown('solar');
+        updateCountdown('lunar');
+    }, 1000);
 </script>
 
 </body>

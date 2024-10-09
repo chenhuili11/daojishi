@@ -3,59 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倒计时器</title>
+    <title>纪念日倒计时器</title>
     <style>
         body {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            margin: 0;
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
         }
         .card {
             background-color: white;
-            padding: 20px;
+            padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
-            width: 300px;
+            width: 100%;
+            max-width: 400px;
         }
         .time-section {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
+            margin-top: 1.5rem;
         }
         .time-item {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .time-value {
-            font-size: 2em;
+            font-size: 2.5rem;
             font-weight: bold;
+            line-height: 1;
         }
-        h3 {
-            font-size: 2.5em; /* 字体放大 */
-            margin: 0;       /* 去掉默认外边距 */
+        .time-label {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin: 0 0 0.5rem;
+            color: #333;
+        }
+        h2 {
+            font-size: 1.25rem;
+            margin: 0 0 1rem;
+            color: #666;
+            font-weight: normal;
         }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h3>纪念日</h3>
+    <h1>纪念日</h1>
     <h2>距离6月14日还有</h2>
-    <div class="time-section" id="countdown">
+    <div class="time-section" id="countdown" aria-live="polite">
         <div class="time-item">
-            <span class="time-value" id="days">0</span> 天
+            <span class="time-value" id="days">0</span>
+            <span class="time-label">天</span>
         </div>
         <div class="time-item">
-            <span class="time-value" id="hours">0</span> 小时
+            <span class="time-value" id="hours">0</span>
+            <span class="time-label">小时</span>
         </div>
         <div class="time-item">
-            <span class="time-value" id="minutes">0</span> 分钟
+            <span class="time-value" id="minutes">0</span>
+            <span class="time-label">分钟</span>
         </div>
         <div class="time-item">
-            <span class="time-value" id="seconds">0</span> 秒
+            <span class="time-value" id="seconds">0</span>
+            <span class="time-label">秒</span>
         </div>
     </div>
 </div>
@@ -79,10 +100,10 @@
             const seconds = Math.floor((difference / 1000) % 60);
 
             // 更新显示内容
-            document.getElementById("days").innerText = days;
-            document.getElementById("hours").innerText = hours;
-            document.getElementById("minutes").innerText = minutes;
-            document.getElementById("seconds").innerText = seconds;
+            document.getElementById("days").textContent = days;
+            document.getElementById("hours").textContent = hours.toString().padStart(2, '0');
+            document.getElementById("minutes").textContent = minutes.toString().padStart(2, '0');
+            document.getElementById("seconds").textContent = seconds.toString().padStart(2, '0');
         }
     };
 
